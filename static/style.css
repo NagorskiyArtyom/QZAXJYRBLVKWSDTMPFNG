@@ -1,0 +1,638 @@
+/* Базовые стили */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Сообщения */
+.flash-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1100;
+}
+
+.flash {
+    padding: 12px 24px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    animation: fadeInOut 3s forwards;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.flash.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.flash.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; top: -50px; }
+    10% { opacity: 1; top: 20px; }
+    90% { opacity: 1; top: 20px; }
+    100% { opacity: 0; top: -50px; }
+}
+
+/* Шапка с кнопками */
+.header-controls {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 1000;
+}
+
+/* Кнопка аватара */
+.avatar-btn {
+    width: 50px;
+    height: 50px;
+    background-color: #3498db;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.avatar-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Кнопка меню */
+.menu-btn {
+    height: 50px;
+    padding: 0 20px;
+    background: #79CE93;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.menu-btn:hover {
+    background: #;
+    transform: translateY(-2px);
+}
+
+/* Секции меню */
+.sections-container {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    background: white;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 15px;
+    z-index: 900;
+    display: none;
+}
+
+.sections-container:not(.hidden) {
+    display: block;
+}
+
+.section {
+    padding: 12px;
+    margin: 8px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+
+.section:hover {
+    background: #f0f0f0;
+}
+
+.section.active {
+    background: #e3f2fd;
+    border-left: 3px solid #4a6fa5;
+}
+
+.section h3 {
+    color: #4a6fa5;
+    margin-bottom: 5px;
+}
+
+.section p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.section-divider {
+    height: 1px;
+    background: #eee;
+    margin: 12px 0;
+}
+
+/* Контент секций */
+.section-content {
+    display: none;
+    max-width: 690px;
+    margin: 120px auto 0;
+    padding: 0 20px;
+}
+
+.section-content.active {
+    display: block;
+}
+
+.content-box {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.test-item {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #4a6fa5;
+}
+
+.test-item h4 {
+    margin: 0 0 5px 0;
+    color: #4a6fa5;
+}
+
+.test-item p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Информация профиля */
+.profile-info {
+    max-width: 500px;
+    margin: 100px auto 0;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.profile-info h2 {
+    color: #4a6fa5;
+    margin-bottom: 20px;
+}
+
+.logout-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #e74c3c;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+/* Модальные окна */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.modal:not(.hidden) {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    position: relative;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #777;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.submit-btn {
+    padding: 10px 20px;
+    background: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 15px;
+}
+
+.submit-btn:hover {
+    background: #27ae60;
+}
+
+/* Стили для авторизации */
+.auth-interface {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.auth-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.auth-btn:hover {
+    background: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.auth-icon {
+    font-size: 18px;
+}
+
+.auth-text {
+    font-weight: 500;
+}
+
+.auth-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+}
+
+.auth-modal:not(.hidden) {
+    display: flex;
+}
+
+.auth-modal-content {
+    background: white;
+    width: 500px;
+    max-width: 1000%;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 5px 30px rgba(0,0,0,0.2);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.auth-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.auth-close-btn:hover {
+    color: #333;
+}
+
+.auth-tabs {
+    display: flex;
+    background: #f8f9fa;
+}
+
+.auth-tab-btn {
+    flex: 1;
+    padding: 15px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.auth-tab-btn.active {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.auth-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #2ecc71;
+}
+
+.auth-tab-content {
+    padding: 20px;
+}
+
+.auth-tab-pane {
+    display: none;
+}
+
+.auth-tab-pane.active {
+    display: block;
+}
+
+.auth-form-group {
+    margin-bottom: 15px;
+}
+
+.auth-form-group.compact input {
+    width: 95%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+.auth-form-group input:focus {
+    border-color: #2ecc71;
+    outline: none;
+}
+
+.auth-submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.auth-submit-btn:hover {
+    background: #27ae60;
+}
+.wide-modal {
+    width: 500px;
+    max-width: 90%;
+}
+
+.auth-modal-header {
+    padding: 20px 25px 10px;
+    text-align: center;
+}
+
+.auth-modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .header-controls {
+        top: 10px;
+        left: 10px;
+    }
+
+    .sections-container {
+        top: 80px;
+        left: 10px;
+        width: calc(100% - 20px);
+    }
+
+    .section-content {
+        margin-top: 150px;
+        padding: 10px;
+    }
+
+    .content-box {
+        padding: 20px;
+    }
+
+    .auth-modal-content {
+        width: 80%;
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Стили для модального окна аватара */
+.avatar-modal {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.avatar-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.avatar-modal-header h3 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.25rem;
+}
+
+.avatar-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6c757d;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+    line-height: 1;
+}
+
+.avatar-modal-close:hover {
+    color: #343a40;
+}
+
+.avatar-modal-body {
+    padding: 20px;
+}
+
+.avatar-preview-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.avatar-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #f1f3f5;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px dashed #ced4da;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-preview:hover {
+    border-color: #adb5bd;
+}
+
+.default-avatar-icon {
+    font-size: 4rem;
+    color: #868e96;
+}
+
+.file-input-wrapper {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.file-upload-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 15px;
+    background: #24a9b7;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.file-upload-label:hover {
+    background: #339af0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.file-upload-icon {
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+.file-upload-text {
+    font-weight: 500;
+}
+
+#avatarInput {
+    display: none;
+}
+
+.file-requirements {
+    font-size: 0.8rem;
+    color: #868e96;
+    margin-top: 8px;
+}
+
+.avatar-submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #24b77c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-submit-btn:hover {
+    background: #4fd24b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-submit-btn:disabled {
+    background: #ced4da;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.submit-btn-icon {
+    margin-right: 8px;
+    font-size: 1.1rem;
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+    </div>
+
+    {% if user %}
+        <!-- Интерфейс для авторизованных пользователей -->
+        <div class="header-controls">
+            <button class="avatar-btn" id="avatarBtn" style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
+                {% if not user.avatar %}👤{% endif %}
+            </button>
+            <button class="menu-btn" id="menuBtn">☰ Меню</button>
+        </div>
+
+        <div class="sections-container hidden" id="sectionsContainer">
+            <div class="section active" data-section="tests">
+                <h3>Мои тесты</h3>
+                <p>Список ваших тестов</p>
+            </div>
+            <div class="section-divider"></div>
+            <div class="section" data-section="favorites">
+                <h3>Избранное</h3>
+                <p>Сохраненные тесты</p>
+            </div>
+            <div class="section-divider"></div>
+            <div class="section" data-section="history">
+                <h3>История</h3>
+                <p>Ваши действия</p>
+            </div>
+        </div>
+
+        <!-- Контейнеры для контента секций -->
+        <div id="testsContent" class="section-content active">
+            <div class="content-box">
+                <h2>Мои тесты</h2>
+                </div>
+        </div>
+
+        <div id="favoritesContent" class="section-content">
+            <div class="content-box">
+                <h2>Избранное</h2>
+            </div>
+        </div>
+
+        <div id="historyContent" class="section-content">
+            <div class="content-box">
+                <h2>История действий</h2>
+                </div>
+            </div>
+
+        <div class="profile-info">
+            <h2>Привет, {{ user.name }}!</h2>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
+        </div>
+
+        <div class="modal hidden" id="avatarModal">
+            <div class="avatar-modal">
+                <div class="avatar-modal-header">
+                    <h3>Сменить аватар</h3>
+                    <button class="avatar-modal-close" id="closeAvatarBtn">&times;</button>
+                </div>
+                <div class="avatar-modal-body">
+                    <div class="avatar-preview-container">
+                        <div class="avatar-preview" id="avatarPreview"
+                             style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
+                     {% if not user.avatar %}<span class="default-avatar-icon">👤</span>{% endif %}
+                </div>
+            </div>
+            <form method="POST" action="{{ url_for('upload_avatar') }}" enctype="multipart/form-data" class="avatar-upload-form">
+                <div class="file-input-wrapper">
+                    <label for="avatarInput" class="file-upload-label">
+                        <span class="file-upload-text">Выбрать файл</span>
+                        <input type="file" name="avatar" id="avatarInput" accept="image/*" required>
+                    </label>
+                    <div class="file-requirements">
+                        JPG, PNG (макс. 2MB)
+                    </div>
+                </div>
+                <button type="submit" class="avatar-submit-btn">
+                    Сохранить
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+    {% else %}
+        <!-- Интерфейс для неавторизованных пользователей -->
+        <div class="auth-interface">
+            <button class="auth-btn" id="authBtn">
+                <span class="auth-text">Войти</span>
+            </button>
+
+            <div class="auth-modal hidden" id="authModal">
+                <div class="auth-modal-content">
+                    <span class="auth-close-btn" id="closeAuthBtn">&times;</span>
+
+                    <div class="auth-tabs">
+                        <button class="auth-tab-btn active" data-tab="login">Вход</button>
+                        <button class="auth-tab-btn" data-tab="register">Регистрация</button>
+                    </div>
+
+                    <div class="auth-tab-content">
+                        <div id="loginForm" class="auth-tab-pane active">
+                            <form method="POST" action="{{ url_for('index') }}">
+                                <div class="auth-form-group compact">
+                                    <input type="text" name="username" placeholder="Email" required>
+                                </div>
+                                <div class="auth-form-group compact">
+                                    <input type="password" name="password" placeholder="Пароль" required>
+                                </div>
+                                <button type="submit" name="login" class="auth-submit-btn">Войти</button>
+                            </form>
+                        </div>
+
+                        <div id="registerForm" class="auth-tab-pane">
+                            <form method="POST" action="{{ url_for('index') }}">
+                                <div class="auth-form-group compact">
+                                    <input type="text" name="username" placeholder="Email" required>
+                                </div>
+                                <div class="auth-form-group compact">
+                                    <input type="password" name="password" placeholder="Пароль" required>
+                                </div>
+                                <div class="auth-form-group compact">
+                                    <input type="text" name="name" placeholder="Ваше имя" required>
+                                </div>
+                                <button type="submit" name="register" class="auth-submit-btn">Зарегистрироваться</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
