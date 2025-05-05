@@ -10,62 +10,98 @@ document.addEventListener('DOMContentLoaded', function() {
     const sectionContents = document.querySelectorAll('.section-content');
 
     // Инициализация - скрываем кнопку "+" по умолчанию
-    addButton.classList.add('hidden');
+    if (addButton) addButton.classList.add('hidden');
+
+    // ===== Функция для отправки формы =====
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // ===== Обработка форм авторизации =====
+    const loginForm = document.querySelector('form[name="login"]');
+    const registerForm = document.querySelector('form[name="register"]');
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleFormSubmit);
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleFormSubmit);
+    }
 
     // ===== Обработка меню =====
-    menuBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        sectionsContainer.classList.toggle('hidden');
+    if (menuBtn && sectionsContainer) {
+        menuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sectionsContainer.classList.toggle('hidden');
 
-        // Показываем "+" только при открытом меню и в секции "Мои тесты"
-        if (sectionsContainer.classList.contains('hidden')) {
-            addButton.classList.add('hidden');
-        } else {
-            const activeSection = document.querySelector('.section.active');
-            if (activeSection && activeSection.dataset.section === 'tests') {
-                addButton.classList.remove('hidden');
-                addButton.textContent = '+';
-                addButton.classList.remove('add-mode');
+            if (sectionsContainer.classList.contains('hidden')) {
+                if (addButton) addButton.classList.add('hidden');
+            } else {
+                const activeSection = document.querySelector('.section.active');
+                if (activeSection && activeSection.dataset.section === 'tests' && addButton) {
+                    addButton.classList.remove('hidden');
+                    addButton.textContent = '+';
+                    addButton.classList.remove('add-mode');
+                }
             }
-        }
-    });
+        });
+    }
 
     // ===== Обработка кнопки +/Добавить =====
-    addButton.addEventListener('click', function(e) {
-        e.stopPropagation();
+    if (addButton) {
+        addButton.addEventListener('click', function(e) {
+            e.stopPropagation();
 
-        if (this.textContent === '+') {
-            // Активируем режим добавления
-            this.textContent = 'Добавить';
-            this.classList.add('add-mode');
+            if (this.textContent === '+') {
+                // Активируем режим добавления
+                this.textContent = 'Добавить';
+                this.classList.add('add-mode');
 
-            // Скрываем все лишние элементы
-            sectionsContainer.classList.add('hidden');
-            profileInfo.classList.add('hidden');
-            myTestsContent.classList.add('hidden');
+                // Скрываем все лишние элементы
+                if (sectionsContainer) sectionsContainer.classList.add('hidden');
+                if (profileInfo) profileInfo.classList.add('hidden');
+                if (myTestsContent) myTestsContent.classList.add('hidden');
 
-            // Показываем поля ввода
-            phraseInputContainer.classList.remove('hidden');
+                // Показываем поля ввода
+                if (phraseInputContainer) phraseInputContainer.classList.remove('hidden');
 
-            // Прокручиваем к полям ввода
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-            });
-        } else {
-            // Деактивируем режим добавления
-            this.textContent = '+';
-            this.classList.remove('add-mode');
-            phraseInputContainer.classList.add('hidden');
+                // Прокручиваем к полям ввода
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            } else {
+                // Деактивируем режим добавления
+                this.textContent = '+';
+                this.classList.remove('add-mode');
+                if (phraseInputContainer) phraseInputContainer.classList.add('hidden');
 
-            // Восстанавливаем скрытые элементы
-            profileInfo.classList.remove('hidden');
-            myTestsContent.classList.remove('hidden');
+                // Восстанавливаем скрытые элементы
+                if (profileInfo) profileInfo.classList.remove('hidden');
+                if (myTestsContent) myTestsContent.classList.remove('hidden');
 
-            // Кнопка "+" останется скрытой до открытия меню
-            this.classList.add('hidden');
-        }
-    });
+                // Кнопка "+" останется скрытой до открытия меню
+                this.classList.add('hidden');
+            }
+        });
+    }
 
     // ===== Переключение между секциями =====
     sections.forEach(section => {
@@ -77,21 +113,24 @@ document.addEventListener('DOMContentLoaded', function() {
             // Устанавливаем активное состояние
             this.classList.add('active');
             const sectionId = this.dataset.section + 'Content';
-            document.getElementById(sectionId).classList.add('active');
+            const sectionContent = document.getElementById(sectionId);
+            if (sectionContent) sectionContent.classList.add('active');
 
             // Управление кнопкой "+"
-            if (this.dataset.section === 'tests') {
-                if (!sectionsContainer.classList.contains('hidden')) {
-                    addButton.classList.remove('hidden');
-                    addButton.textContent = '+';
-                    addButton.classList.remove('add-mode');
+            if (addButton) {
+                if (this.dataset.section === 'tests') {
+                    if (sectionsContainer && !sectionsContainer.classList.contains('hidden')) {
+                        addButton.classList.remove('hidden');
+                        addButton.textContent = '+';
+                        addButton.classList.remove('add-mode');
+                    }
+                } else {
+                    addButton.classList.add('hidden');
                 }
-            } else {
-                addButton.classList.add('hidden');
             }
 
             // Закрываем режим добавления если был активен
-            if (!phraseInputContainer.classList.contains('hidden')) {
+            if (phraseInputContainer && !phraseInputContainer.classList.contains('hidden')) {
                 addButton.click();
             }
         });
@@ -163,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 authTabBtns.forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.auth-tab-pane').forEach(p => p.classList.remove('active'));
                 this.classList.add('active');
-                document.getElementById(this.dataset.tab + 'Form').classList.add('active');
+                const tabForm = document.getElementById(this.dataset.tab + 'Form');
+                if (tabForm) tabForm.classList.add('active');
             });
         });
     }
@@ -174,8 +214,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
             if (authModal) authModal.classList.add('hidden');
 
-            if (!phraseInputContainer.classList.contains('hidden')) {
-                addButton.click();
+            if (phraseInputContainer && !phraseInputContainer.classList.contains('hidden')) {
+                if (addButton) addButton.click();
             }
         }
     });
