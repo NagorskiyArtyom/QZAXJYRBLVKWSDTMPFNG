@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key_12345'
@@ -19,6 +20,15 @@ class User(db.Model):
     password = db.Column(db.String(100), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     avatar = db.Column(db.String(100))
+    cards = db.relationship('Card', backref='user', lazy=True)
+
+
+class Card(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    front_text = db.Column(db.String(500), nullable=False)
+    back_text = db.Column(db.String(500), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
 with app.app_context():
@@ -105,6 +115,97 @@ def logout():
     session.pop('user_id', None)
     flash('Вы вышли из системы', 'info')
     return redirect(url_for('index'))
+
+
+@app.route('/add_card', methods=['POST'])
+def add_card():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    data = request.get_json()
+    if not data or 'front_text' not in data or 'back_text' not in data:
+        return jsonify({'error': 'Invalid data'}), 400
+
+    new_card = Card(
+        front_text=data['front_text'],
+        back_text=data['back_text'],
+        user_id=session['user_id']
+    )
+
+    try:
+        db.session.add(new_card)
+        db.session.commit()
+        return jsonify({
+            'id': new_card.id,
+            'front_text': new_card.front_text,
+            'back_text': new_card.back_text,
+            'created_at': new_card.created_at.strftime('%Y-%m-%d %H:%M')
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/get_cards')
+def get_cards():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    cards = Card.query.filter_by(user_id=session['user_id']).order_by(Card.created_at.desc()).all()
+    cards_data = [{
+        'id': card.id,
+        'front_text': card.front_text,
+        'back_text': card.back_text,
+        'created_at': card.created_at.strftime('%Y-%m-%d %H:%M')
+    } for card in cards]
+
+    return jsonify(cards_data)
+
+
+@app.route('/update_card/<int:card_id>', methods=['POST'])
+def update_card(card_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    card = Card.query.filter_by(id=card_id, user_id=session['user_id']).first()
+    if not card:
+        return jsonify({'error': 'Card not found'}), 404
+
+    data = request.get_json()
+    if not data or 'front_text' not in data or 'back_text' not in data:
+        return jsonify({'error': 'Invalid data'}), 400
+
+    try:
+        card.front_text = data['front_text']
+        card.back_text = data['back_text']
+        db.session.commit()
+        return jsonify({
+            'id': card.id,
+            'front_text': card.front_text,
+            'back_text': card.back_text,
+            'created_at': card.created_at.strftime('%Y-%m-%d %H:%M')
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/delete_card/<int:card_id>', methods=['DELETE'])
+def delete_card(card_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    card = Card.query.filter_by(id=card_id, user_id=session['user_id']).first()
+    if not card:
+        return jsonify({'error': 'Card not found'}), 404
+
+    try:
+        db.session.delete(card)
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

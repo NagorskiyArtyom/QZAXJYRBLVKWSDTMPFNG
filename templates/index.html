@@ -44,10 +44,30 @@
         <!-- Контент секций -->
         <div id="testsContent" class="section-content active">
             <div class="content-box">
-                <h2>Мои тесты</h2>
+                <h2 class="hidden">Мои тесты</h2>
+
+                <!-- Форма добавления для фраз -->
+                <div class="add-card-form">
+                    <h3>Добавить новую фразу</h3>
+                    <form id="cardForm">
+                        <div class="form-group">
+                            <input type="text" id="frontText" placeholder="Первая часть" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="backText" placeholder="Вторая часть" required>
+                        </div>
+                        <button type="submit" class="add-btn">Добавить</button>
+                    </form>
+                </div>
+
+                <!-- Список фраз -->
+                <div class="cards-container" id="cardsContainer">
+                    <!-- фразы здесь -->
+                </div>
             </div>
         </div>
 
+        <!-- Остальные секции -->
         <div id="favoritesContent" class="section-content">
             <div class="content-box">
                 <h2>Избранное</h2>
@@ -63,23 +83,6 @@
         <div class="profile-info">
             <h2>Привет, {{ user.name }}!</h2>
             <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
-        </div>
-
-        <!-- Кнопка добавления -->
-        <button class="add-button hidden" id="addButton">
-            <span>Добавить</span>
-        </button>
-
-        <!-- Поля для ввода фраз -->
-        <div class="phrase-input-container hidden" id="phraseInputContainer">
-            <div class="phrase-input-wrapper">
-                <input type="text" class="phrase-input" placeholder="Введите текст">
-                <div class="phrase-label">Первая часть фразы</div>
-            </div>
-            <div class="phrase-input-wrapper">
-                <input type="text" class="phrase-input" placeholder="Введите текст">
-                <div class="phrase-label">Вторая часть фразы</div>
-            </div>
         </div>
 
         <!-- Модальное окно аватара -->
