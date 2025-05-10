@@ -2,28 +2,37 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой профиль</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="flash-container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endwith %}
-    </div>
-
-    {% if user %}
-        <!-- Интерфейс для авторизованных пользователей -->
-        <div class="header-controls">
-            <button class="avatar-btn" id="avatarBtn" style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
-                {% if not user.avatar %}👤{% endif %}
-            </button>
-            <button class="menu-btn" id="menuBtn">☰ Меню</button>
+    <nav class="navbar">
+        <div class="navbar-left">
+            {% if user %}
+                <button class="avatar-btn" id="avatarBtn" style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
+                    {% if not user.avatar %}👤{% endif %}
+                </button>
+                <button class="menu-btn" id="menuBtn">☰ Меню</button>
+                <a href="/" class="home-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </a>
+            {% else %}
+                <button class="auth-btn" id="authBtn">
+                    <span class="auth-text">Войти</span>
+                </button>
+            {% endif %}
         </div>
 
+        <div class="navbar-center">Match</div>
+
+        <div class="navbar-right">
+            <input type="text" class="search-bar" placeholder="Поиск...">
+        </div>
+    </nav>
+
+    {% if user %}
         <div class="sections-container hidden" id="sectionsContainer">
             <div class="section active" data-section="tests">
                 <h3>Мои тесты</h3>
@@ -41,12 +50,10 @@
             </div>
         </div>
 
-        <!-- Контент секций -->
         <div id="testsContent" class="section-content active">
             <div class="content-box">
                 <h2 class="hidden">Мои тесты</h2>
 
-                <!-- Форма добавления для фраз -->
                 <div class="add-card-form">
                     <h3>Добавить новую фразу</h3>
                     <form id="cardForm">
@@ -60,14 +67,10 @@
                     </form>
                 </div>
 
-                <!-- Список фраз -->
-                <div class="cards-container" id="cardsContainer">
-                    <!-- фразы здесь -->
-                </div>
+                <div class="cards-container" id="cardsContainer"></div>
             </div>
         </div>
 
-        <!-- Остальные секции -->
         <div id="favoritesContent" class="section-content">
             <div class="content-box">
                 <h2>Избранное</h2>
@@ -80,16 +83,10 @@
             </div>
         </div>
 
-        <div class="profile-info">
-            <h2>Привет, {{ user.name }}!</h2>
-            <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
-        </div>
-
-        <!-- Модальное окно аватара -->
         <div class="modal hidden" id="avatarModal">
             <div class="avatar-modal">
                 <div class="avatar-modal-header">
-                    <h3>Сменить аватар</h3>
+                    <h3>Профиль</h3>
                     <button class="avatar-modal-close" id="closeAvatarBtn">&times;</button>
                 </div>
                 <div class="avatar-modal-body">
@@ -110,58 +107,54 @@
                             </div>
                         </div>
                         <button type="submit" class="avatar-submit-btn">
-                            Сохранить
+                            Сохранить изменения
                         </button>
                     </form>
+                </div>
+                <div class="avatar-modal-footer">
+                    <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
                 </div>
             </div>
         </div>
     {% else %}
-        <!-- Интерфейс для неавторизованных пользователей -->
-        <div class="auth-interface">
-            <button class="auth-btn" id="authBtn">
-                <span class="auth-text">Войти</span>
-            </button>
+        <div class="auth-modal hidden" id="authModal">
+            <div class="auth-modal-content">
+                <span class="auth-close-btn" id="closeAuthBtn">&times;</span>
 
-            <div class="auth-modal hidden" id="authModal">
-                <div class="auth-modal-content">
-                    <span class="auth-close-btn" id="closeAuthBtn">&times;</span>
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" data-tab="login">Вход</button>
+                    <button class="auth-tab-btn" data-tab="register">Регистрация</button>
+                </div>
 
-                    <div class="auth-tabs">
-                        <button class="auth-tab-btn active" data-tab="login">Вход</button>
-                        <button class="auth-tab-btn" data-tab="register">Регистрация</button>
+                <div class="auth-tab-content">
+                    <div id="loginForm" class="auth-tab-pane active">
+                        <div class="auth-form-container">
+                            <form method="POST" action="{{ url_for('index') }}">
+                                <div class="auth-form-group compact">
+                                    <input type="text" name="username" placeholder="Email" required>
+                                </div>
+                                <div class="auth-form-group compact">
+                                    <input type="password" name="password" placeholder="Пароль" required>
+                                </div>
+                                <button type="submit" name="login" class="auth-submit-btn">Войти</button>
+                            </form>
+                        </div>
                     </div>
 
-                    <div class="auth-tab-content">
-                        <div id="loginForm" class="auth-tab-pane active">
-                            <div class="auth-form-container">
-                                <form method="POST" action="{{ url_for('index') }}">
-                                    <div class="auth-form-group compact">
-                                        <input type="text" name="username" placeholder="Email" required>
-                                    </div>
-                                    <div class="auth-form-group compact">
-                                        <input type="password" name="password" placeholder="Пароль" required>
-                                    </div>
-                                    <button type="submit" name="login" class="auth-submit-btn">Войти</button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div id="registerForm" class="auth-tab-pane">
-                            <div class="auth-form-container">
-                                <form method="POST" action="{{ url_for('index') }}">
-                                    <div class="auth-form-group compact">
-                                        <input type="text" name="username" placeholder="Email" required>
-                                    </div>
-                                    <div class="auth-form-group compact">
-                                        <input type="password" name="password" placeholder="Пароль" required>
-                                    </div>
-                                    <div class="auth-form-group compact">
-                                        <input type="text" name="name" placeholder="Ваше имя" required>
-                                    </div>
-                                    <button type="submit" name="register" class="auth-submit-btn">Зарегистрироваться</button>
-                                </form>
-                            </div>
+                    <div id="registerForm" class="auth-tab-pane">
+                        <div class="auth-form-container">
+                            <form method="POST" action="{{ url_for('index') }}">
+                                <div class="auth-form-group compact">
+                                    <input type="text" name="username" placeholder="Email" required>
+                                </div>
+                                <div class="auth-form-group compact">
+                                    <input type="password" name="password" placeholder="Пароль" required>
+                                </div>
+                                <div class="auth-form-group compact">
+                                    <input type="text" name="name" placeholder="Ваше имя" required>
+                                </div>
+                                <button type="submit" name="register" class="auth-submit-btn">Зарегистрироваться</button>
+                            </form>
                         </div>
                     </div>
                 </div>

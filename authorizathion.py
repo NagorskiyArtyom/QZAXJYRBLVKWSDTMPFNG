@@ -49,9 +49,7 @@ def index():
 
             if user and check_password_hash(user.password, password):
                 session['user_id'] = user.id
-                flash('Вход выполнен успешно!', 'success')
                 return redirect(url_for('index'))
-            flash('Неверные учетные данные', 'error')
 
         elif 'register' in request.form:
             username = request.form['username']
@@ -59,9 +57,9 @@ def index():
             name = request.form['name']
 
             if User.query.filter_by(username=username).first():
-                flash('Этот email уже занят', 'error')
+                return redirect(url_for('index'))
             elif User.query.filter_by(name=name).first():
-                flash('Этот никнейм уже занят', 'error')
+                return redirect(url_for('index'))
             else:
                 new_user = User(
                     username=username,
@@ -70,7 +68,6 @@ def index():
                 )
                 db.session.add(new_user)
                 db.session.commit()
-                flash('Регистрация успешна! Теперь войдите.', 'success')
                 return redirect(url_for('index'))
 
     return render_template('index.html', user=user)
@@ -113,7 +110,6 @@ def uploaded_file(filename):
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
-    flash('Вы вышли из системы', 'info')
     return redirect(url_for('index'))
 
 

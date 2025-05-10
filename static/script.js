@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Основные элементы
     const menuBtn = document.getElementById('menuBtn');
     const sectionsContainer = document.getElementById('sectionsContainer');
     const sections = document.querySelectorAll('.section');
@@ -16,15 +15,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const cardForm = document.getElementById('cardForm');
     const cardsContainer = document.getElementById('cardsContainer');
 
-    // Загрузка фраз при загрузке страницы
     if (cardsContainer) {
         loadCards();
     }
 
-    // Функция загрузки фраз
     function loadCards() {
         fetch('/get_cards')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(cards => {
                 if (cards.error) {
                     console.error(cards.error);
@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error loading cards:', error));
     }
 
-    // Функция добавления фразы в DOM
     function addCardToDOM(card) {
         const cardElement = document.createElement('div');
         cardElement.className = 'card-item';
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         cardsContainer.appendChild(cardElement);
 
-        // Добавляем обработчик удаления
         const deleteBtn = cardElement.querySelector('.delete-card');
         deleteBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -61,20 +59,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Функция удаления фразы
     function deleteCard(cardId) {
-         {
+        if (confirm('Вы уверены, что хотите удалить эту фразу?')) {
             fetch(`/delete_card/${cardId}`, {
                 method: 'DELETE'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
             .then(data => {
                 if (data.error) {
                     alert(data.error);
                     return;
                 }
 
-                // Удаляем фразу из DOM
                 const cardElement = document.querySelector(`.card-item[data-id="${cardId}"]`);
                 if (cardElement) {
                     cardElement.remove();
@@ -84,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Обработка формы добавления фразы
     if (cardForm) {
         cardForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -103,17 +101,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         back_text: backText
                     })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
                 .then(data => {
                     if (data.error) {
                         alert(data.error);
                         return;
                     }
 
-                    // Очищаем форму
                     cardForm.reset();
-
-                    // Добавляем новую фразу
                     addCardToDOM(data);
                 })
                 .catch(error => {
@@ -124,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Остальной ваш оригинальный код обработчиков событий
     if (menuBtn && sectionsContainer) {
         menuBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -150,14 +147,9 @@ document.addEventListener('DOMContentLoaded', function() {
             avatarModal.classList.remove('hidden');
         });
 
-        closeAvatarBtn.addEventListener('click', function() {
+        closeAvatarBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
             avatarModal.classList.add('hidden');
-        });
-
-        document.addEventListener('click', function(e) {
-            if (e.target === avatarModal) {
-                avatarModal.classList.add('hidden');
-            }
         });
     }
 
@@ -176,18 +168,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (authBtn && authModal) {
-        authBtn.addEventListener('click', function() {
+        authBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
             authModal.classList.remove('hidden');
         });
 
-        closeAuthBtn.addEventListener('click', function() {
+        closeAuthBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
             authModal.classList.add('hidden');
-        });
-
-        authModal.addEventListener('click', function(e) {
-            if (e.target === authModal) {
-                authModal.classList.add('hidden');
-            }
         });
     }
 
@@ -196,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', function() {
                 authTabBtns.forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.auth-tab-pane').forEach(p => p.classList.remove('active'));
+
                 this.classList.add('active');
                 const tabForm = document.getElementById(this.dataset.tab + 'Form');
                 if (tabForm) tabForm.classList.add('active');
@@ -203,14 +192,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    document.addEventListener('click', function(e) {
+        if (e.target === avatarModal) {
+            avatarModal.classList.add('hidden');
+        }
+        if (e.target === authModal) {
+            authModal.classList.add('hidden');
+        }
+    });
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
-            if (authModal) authModal.classList.add('hidden');
         }
     });
 
     if (sections.length > 0) {
         sections[0].click();
+    }
+
+    const searchBar = document.querySelector('.search-bar');
+    if (searchBar) {
+        searchBar.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            console.log('Searching for:', searchTerm);
+        });
     }
 });
