@@ -14,6 +14,138 @@ document.addEventListener('DOMContentLoaded', function() {
     const authTabBtns = document.querySelectorAll('.auth-tab-btn');
     const cardForm = document.getElementById('cardForm');
     const cardsContainer = document.getElementById('cardsContainer');
+    const addTestBtn = document.getElementById('addTestBtn');
+    const addTestContainer = document.getElementById('addTestContainer');
+    const testNameInput = document.getElementById('testName');
+    const cardsPreview = document.getElementById('cardsPreview');
+    const cancelTestBtn = document.querySelector('.cancel-test-btn');
+    const createTestBtn = document.querySelector('.create-test-btn');
+    const addCardBtn = document.querySelector('.add-card-btn');
+    const cardFrontInput = document.querySelector('.card-front-input');
+    const cardBackInput = document.querySelector('.card-back-input');
+
+    let currentCards = [];
+
+    if (addTestBtn) {
+        addTestBtn.addEventListener('click', function() {
+            addTestBtn.classList.add('hidden');
+            addTestContainer.classList.remove('hidden');
+            testNameInput.focus();
+        });
+    }
+
+    if (cancelTestBtn) {
+        cancelTestBtn.addEventListener('click', function() {
+            resetTestForm();
+        });
+    }
+
+    if (addCardBtn) {
+        addCardBtn.addEventListener('click', function() {
+            const frontText = cardFrontInput.value.trim();
+            const backText = cardBackInput.value.trim();
+
+            if (frontText && backText) {
+                currentCards.push({
+                    front_text: frontText,
+                    back_text: backText
+                });
+
+                updateCardsPreview();
+                cardFrontInput.value = '';
+                cardBackInput.value = '';
+                cardFrontInput.focus();
+            }
+        });
+    }
+
+    if (createTestBtn) {
+        createTestBtn.addEventListener('click', function() {
+            const testName = testNameInput.value.trim();
+
+            if (!testName) {
+                alert('Пожалуйста, введите название теста');
+                return;
+            }
+
+            if (currentCards.length === 0) {
+                alert('Добавьте хотя бы одну фразу');
+                return;
+            }
+
+            const savePromises = currentCards.map(card => {
+                card.test_name = testName;
+                return saveCardToServer(card);
+            });
+
+            Promise.all(savePromises)
+                .then(() => {
+                    resetTestForm();
+                    alert('Тест успешно создан!');
+                })
+                .catch(error => {
+                    if (error.error === 'У вас уже есть тест с таким названием') {
+                        testNameError.textContent = 'У вас уже есть тест с таким названием. Пожалуйста, выберите другое название.';
+                        testNameError.style.display = 'block';
+                    } else {
+                        testNameError.textContent = 'Произошла ошибка при сохранении теста: ' + (error.error || 'Неизвестная ошибка');
+                        testNameError.style.display = 'block';
+                    }
+                });
+        });
+    }
+
+
+    function updateCardsPreview() {
+        cardsPreview.innerHTML = '';
+        currentCards.forEach((card, index) => {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'card-preview-item';
+            cardElement.innerHTML = `
+                <div class="card-preview-text">
+                    <div class="card-preview-front">${card.front_text}</div>
+                    <div class="card-preview-back">${card.back_text}</div>
+                </div>
+                <button class="delete-preview-card" data-index="${index}">×</button>
+            `;
+            cardsPreview.appendChild(cardElement);
+        });
+
+        document.querySelectorAll('.delete-preview-card').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.dataset.index);
+                currentCards.splice(index, 1);
+                updateCardsPreview();
+            });
+        });
+    }
+
+    function saveCardToServer(cardData) {
+        return fetch('/add_card', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cardData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => Promise.reject(err));
+            }
+            return response.json();
+        });
+    }
+
+    function resetTestForm() {
+        currentCards = [];
+        testNameInput.value = '';
+        cardFrontInput.value = '';
+        cardBackInput.value = '';
+        cardsPreview.innerHTML = '';
+        addTestContainer.classList.add('hidden');
+        addTestBtn.classList.remove('hidden');
+    }
+
 
     if (cardsContainer) {
         loadCards();

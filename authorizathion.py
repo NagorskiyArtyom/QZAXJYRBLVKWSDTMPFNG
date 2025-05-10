@@ -13,7 +13,6 @@ db = SQLAlchemy(app)
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -22,18 +21,16 @@ class User(db.Model):
     avatar = db.Column(db.String(100))
     cards = db.relationship('Card', backref='user', lazy=True)
 
-
 class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     front_text = db.Column(db.String(500), nullable=False)
     back_text = db.Column(db.String(500), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+    test_name = db.Column(db.String(100))
 
 with app.app_context():
     db.create_all()
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -72,7 +69,6 @@ def index():
 
     return render_template('index.html', user=user)
 
-
 @app.route('/upload_avatar', methods=['POST'])
 def upload_avatar():
     if 'user_id' not in session:
@@ -97,21 +93,17 @@ def upload_avatar():
 
     return redirect(url_for('index'))
 
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png'}
-
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
-
 
 @app.route('/add_card', methods=['POST'])
 def add_card():
@@ -119,12 +111,21 @@ def add_card():
         return jsonify({'error': 'Not authorized'}), 401
 
     data = request.get_json()
-    if not data or 'front_text' not in data or 'back_text' not in data:
+    if not data or 'front_text' not in data or 'back_text' not in data or 'test_name' not in data:
         return jsonify({'error': 'Invalid data'}), 400
+
+    existing_test = Card.query.filter_by(
+        user_id=session['user_id'],
+        test_name=data['test_name']
+    ).first()
+
+    if existing_test:
+        return jsonify({'error': 'У вас уже есть тест с таким названием'}), 400
 
     new_card = Card(
         front_text=data['front_text'],
         back_text=data['back_text'],
+        test_name=data['test_name'],
         user_id=session['user_id']
     )
 
@@ -135,12 +136,12 @@ def add_card():
             'id': new_card.id,
             'front_text': new_card.front_text,
             'back_text': new_card.back_text,
+            'test_name': new_card.test_name,
             'created_at': new_card.created_at.strftime('%Y-%m-%d %H:%M')
         }), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/get_cards')
 def get_cards():
@@ -152,39 +153,11 @@ def get_cards():
         'id': card.id,
         'front_text': card.front_text,
         'back_text': card.back_text,
+        'test_name': card.test_name,
         'created_at': card.created_at.strftime('%Y-%m-%d %H:%M')
     } for card in cards]
 
     return jsonify(cards_data)
-
-
-@app.route('/update_card/<int:card_id>', methods=['POST'])
-def update_card(card_id):
-    if 'user_id' not in session:
-        return jsonify({'error': 'Not authorized'}), 401
-
-    card = Card.query.filter_by(id=card_id, user_id=session['user_id']).first()
-    if not card:
-        return jsonify({'error': 'Card not found'}), 404
-
-    data = request.get_json()
-    if not data or 'front_text' not in data or 'back_text' not in data:
-        return jsonify({'error': 'Invalid data'}), 400
-
-    try:
-        card.front_text = data['front_text']
-        card.back_text = data['back_text']
-        db.session.commit()
-        return jsonify({
-            'id': card.id,
-            'front_text': card.front_text,
-            'back_text': card.back_text,
-            'created_at': card.created_at.strftime('%Y-%m-%d %H:%M')
-        }), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 500
-
 
 @app.route('/delete_card/<int:card_id>', methods=['DELETE'])
 def delete_card(card_id):
@@ -202,7 +175,6 @@ def delete_card(card_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True)

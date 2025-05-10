@@ -142,7 +142,7 @@ body {
 
 .sections-container {
     position: fixed;
-    top: 80px;
+    top: 100px;
     left: 20px;
     background: white;
     width: 300px;
@@ -601,4 +601,172 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.add-test-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #79CE93;
+    color: white;
+    font-size: 30px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-test-btn:hover {
+    background: #68b67d;
+    transform: scale(1.1);
+}
+
+.add-test-container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.test-header {
+    margin-bottom: 20px;
+}
+
+.test-name-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.cards-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.card-form input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.add-card-btn {
+    background: #4a6fa5;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.add-card-btn:hover {
+    background: #3a5a80;
+}
+
+.cards-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-preview-item {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-preview-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-preview-front {
+    font-weight: bold;
+    color: #4a6fa5;
+}
+
+.card-preview-back {
+    font-weight: bold;
+    color: #4a6fa5;
+}
+
+.delete-preview-card {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.test-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancel-test-btn, .create-test-btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.cancel-test-btn {
+    background: #f1f1f1;
+    border: 1px solid #ddd;
+}
+
+.cancel-test-btn:hover {
+    background: #e1e1e1;
+}
+
+.create-test-btn {
+    background: #79CE93;
+    color: white;
+    border: none;
+}
+
+.create-test-btn:hover {
+    background: #68b67d;
+}
+
+.tests-list {
+    min-height: 300px;
+    position: relative;
+}
+
+.error-message {
+    color: #e74c3c;
+    margin-top: 10px;
+    padding: 10px;
+    background: #fde8e8;
+    border-radius: 4px;
+    display: none;
 }

@@ -52,22 +52,30 @@
 
         <div id="testsContent" class="section-content active">
             <div class="content-box">
-                <h2 class="hidden">Мои тесты</h2>
+                <h2>Мои тесты</h2>
 
-                <div class="add-card-form">
-                    <h3>Добавить новую фразу</h3>
-                    <form id="cardForm">
-                        <div class="form-group">
-                            <input type="text" id="frontText" placeholder="Первая часть" required>
+                <div class="add-test-container hidden" id="addTestContainer">
+                    <div class="test-header">
+                        <input type="text" id="testName" placeholder="Название теста" class="test-name-input">
+                        <div class="error-message" id="testNameError"></div>
+                    </div>
+                    <div class="cards-form-container">
+                        <div class="card-form">
+                            <input type="text" class="card-front-input" placeholder="Первая часть фразы">
+                            <input type="text" class="card-back-input" placeholder="Вторая часть фразы">
+                            <button class="add-card-btn">Добавить фразу</button>
                         </div>
-                        <div class="form-group">
-                            <input type="text" id="backText" placeholder="Вторая часть" required>
-                        </div>
-                        <button type="submit" class="add-btn">Добавить</button>
-                    </form>
+                        <div class="cards-preview" id="cardsPreview"></div>
+                    </div>
+                    <div class="test-actions">
+                        <button class="cancel-test-btn">Отмена</button>
+                        <button class="create-test-btn">Создать тест</button>
+                    </div>
                 </div>
 
-                <div class="cards-container" id="cardsContainer"></div>
+                <div class="tests-list" id="testsList">
+                    <button class="add-test-btn" id="addTestBtn">+</button>
+                </div>
             </div>
         </div>
 
