@@ -8,27 +8,27 @@
 <body>
     <nav class="navbar">
         <div class="navbar-left">
-            {% if user %}
-                <button class="avatar-btn" id="avatarBtn" style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
-                    {% if not user.avatar %}👤{% endif %}
-                </button>
-                <button class="menu-btn" id="menuBtn">☰ Меню</button>
-                <a href="/" class="home-btn">
-                    <svg viewBox="0 0 24 24" width="24" height="24">
-                        <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                    </svg>
-                </a>
-            {% else %}
-                <button class="auth-btn" id="authBtn">
-                    <span class="auth-text">Войти</span>
-                </button>
-            {% endif %}
+            <a href="/" class="home-btn">
+                <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+            </a>
+            <button class="menu-btn" id="menuBtn">☰ Меню</button>
         </div>
 
         <div class="navbar-center">Match</div>
 
         <div class="navbar-right">
             <input type="text" class="search-bar" placeholder="Поиск...">
+            {% if user %}
+                <button class="avatar-btn" id="avatarBtn" style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
+                    {% if not user.avatar %}👤{% endif %}
+                </button>
+            {% else %}
+                <button class="auth-btn" id="authBtn">
+                    <span class="auth-text">Войти</span>
+                </button>
+            {% endif %}
         </div>
     </nav>
 
