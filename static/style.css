@@ -770,3 +770,68 @@ body {
     border-radius: 4px;
     display: none;
 }
+
+.tests-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 80px;
+}
+
+.test-item {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease;
+}
+
+.test-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.test-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background-color: #f0f0f0;
+}
+
+.test-info {
+    flex-grow: 1;
+}
+
+.test-name {
+    font-weight: bold;
+    font-size: 18px;
+    color: #4a6fa5;
+    margin-bottom: 5px;
+}
+
+.test-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.test-username::before {
+    content: "Автор: ";
+    color: #999;
+}
+
+.test-cards-count::before {
+    content: "Фраз: ";
+    color: #999;
+}

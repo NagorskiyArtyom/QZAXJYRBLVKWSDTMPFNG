@@ -13,6 +13,7 @@ db = SQLAlchemy(app)
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -20,6 +21,7 @@ class User(db.Model):
     name = db.Column(db.String(50), nullable=False)
     avatar = db.Column(db.String(100))
     cards = db.relationship('Card', backref='user', lazy=True)
+
 
 class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,8 +31,10 @@ class Card(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     test_name = db.Column(db.String(100))
 
+
 with app.app_context():
     db.create_all()
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -69,6 +73,7 @@ def index():
 
     return render_template('index.html', user=user)
 
+
 @app.route('/upload_avatar', methods=['POST'])
 def upload_avatar():
     if 'user_id' not in session:
@@ -93,17 +98,21 @@ def upload_avatar():
 
     return redirect(url_for('index'))
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png'}
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
+
 
 @app.route('/add_card', methods=['POST'])
 def add_card():
@@ -143,6 +152,7 @@ def add_card():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/get_cards')
 def get_cards():
     if 'user_id' not in session:
@@ -158,6 +168,7 @@ def get_cards():
     } for card in cards]
 
     return jsonify(cards_data)
+
 
 @app.route('/delete_card/<int:card_id>', methods=['DELETE'])
 def delete_card(card_id):
@@ -175,6 +186,63 @@ def delete_card(card_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/get_tests')
+def get_tests():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    tests = db.session.query(
+        Card.test_name,
+        User.username,
+        User.avatar,
+        db.func.count(Card.id).label('cards_count')
+    ).join(
+        User, User.id == Card.user_id
+    ).filter(
+        Card.user_id == session['user_id']
+    ).group_by(
+        Card.test_name
+    ).all()
+
+    tests_data = [{
+        'test_name': test.test_name,
+        'username': test.username,
+        'avatar': test.avatar,
+        'cards_count': test.cards_count
+    } for test in tests]
+
+    return jsonify(tests_data)
+
+
+@app.route('/get_all_tests')
+def get_all_tests():
+    tests = db.session.query(
+        Card.test_name,
+        User.username,
+        User.avatar,
+        db.func.count(Card.id).label('cards_count')
+    ).join(
+        User, User.id == Card.user_id
+    ).group_by(
+        Card.test_name, User.username, User.avatar
+    ).all()
+
+    tests_data = [{
+        'test_name': test.test_name,
+        'username': test.username,
+        'avatar': test.avatar,
+        'cards_count': test.cards_count
+    } for test in tests]
+
+    return jsonify(tests_data)
+
+
+@app.route('/home')
+def home():
+    return render_template('index.html', user=session.get('user_id') and User.query.get(session['user_id']))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
