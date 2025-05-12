@@ -32,6 +32,14 @@ class Card(db.Model):
     test_name = db.Column(db.String(100))
 
 
+class Saved(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    test_name = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 with app.app_context():
     db.create_all()
 
@@ -197,20 +205,23 @@ def get_tests():
         Card.test_name,
         User.username,
         User.avatar,
+        User.id.label('creator_id'),
         db.func.count(Card.id).label('cards_count')
     ).join(
         User, User.id == Card.user_id
     ).filter(
         Card.user_id == session['user_id']
     ).group_by(
-        Card.test_name
+        Card.test_name, User.username, User.avatar, User.id
     ).all()
 
     tests_data = [{
         'test_name': test.test_name,
         'username': test.username,
         'avatar': test.avatar,
-        'cards_count': test.cards_count
+        'creator_id': test.creator_id,
+        'cards_count': test.cards_count,
+        'is_saved': False
     } for test in tests]
 
     return jsonify(tests_data)
@@ -218,23 +229,36 @@ def get_tests():
 
 @app.route('/get_all_tests')
 def get_all_tests():
+    user_id = session.get('user_id')
     tests = db.session.query(
         Card.test_name,
         User.username,
         User.avatar,
+        User.id.label('creator_id'),
         db.func.count(Card.id).label('cards_count')
     ).join(
         User, User.id == Card.user_id
     ).group_by(
-        Card.test_name, User.username, User.avatar
+        Card.test_name, User.username, User.avatar, User.id
     ).all()
 
-    tests_data = [{
-        'test_name': test.test_name,
-        'username': test.username,
-        'avatar': test.avatar,
-        'cards_count': test.cards_count
-    } for test in tests]
+    tests_data = []
+    for test in tests:
+        test_dict = {
+            'test_name': test.test_name,
+            'username': test.username,
+            'avatar': test.avatar,
+            'creator_id': test.creator_id,
+            'cards_count': test.cards_count
+        }
+        if user_id:
+            is_saved = db.session.query(Saved).filter_by(
+                user_id=user_id,
+                creator_id=test.creator_id,
+                test_name=test.test_name
+            ).first() is not None
+            test_dict['is_saved'] = is_saved
+        tests_data.append(test_dict)
 
     return jsonify(tests_data)
 
@@ -242,6 +266,101 @@ def get_all_tests():
 @app.route('/home')
 def home():
     return render_template('index.html', user=session.get('user_id') and User.query.get(session['user_id']))
+
+
+@app.route('/save_test', methods=['POST'])
+def save_test():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    data = request.get_json()
+    if not data or 'creator_id' not in data or 'test_name' not in data:
+        return jsonify({'error': 'Invalid data'}), 400
+
+    existing = Saved.query.filter_by(
+        user_id=session['user_id'],
+        creator_id=data['creator_id'],
+        test_name=data['test_name']
+    ).first()
+
+    if existing:
+        return jsonify({'error': 'Test already saved'}), 400
+
+    new_saved = Saved(
+        user_id=session['user_id'],
+        creator_id=data['creator_id'],
+        test_name=data['test_name']
+    )
+
+    try:
+        db.session.add(new_saved)
+        db.session.commit()
+        return jsonify({'success': True}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/unsave_test', methods=['POST'])
+def unsave_test():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    data = request.get_json()
+    if not data or 'creator_id' not in data or 'test_name' not in data:
+        return jsonify({'error': 'Invalid data'}), 400
+
+    saved_test = Saved.query.filter_by(
+        user_id=session['user_id'],
+        creator_id=data['creator_id'],
+        test_name=data['test_name']
+    ).first()
+
+    if not saved_test:
+        return jsonify({'error': 'Test not found in saved'}), 404
+
+    try:
+        db.session.delete(saved_test)
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/get_saved_tests')
+def get_saved_tests():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authorized'}), 401
+
+    saved_tests = db.session.query(
+        Card.test_name,
+        User.username,
+        User.avatar,
+        User.id.label('creator_id'),
+        db.func.count(Card.id).label('cards_count')
+    ).join(
+        User, User.id == Card.user_id
+    ).join(
+        Saved, db.and_(
+            Saved.test_name == Card.test_name,
+            Saved.creator_id == Card.user_id
+        )
+    ).filter(
+        Saved.user_id == session['user_id']
+    ).group_by(
+        Card.test_name, User.username, User.avatar, User.id
+    ).all()
+
+    tests_data = [{
+        'test_name': test.test_name,
+        'username': test.username,
+        'avatar': test.avatar,
+        'creator_id': test.creator_id,
+        'cards_count': test.cards_count
+    } for test in saved_tests]
+
+    return jsonify(tests_data)
 
 
 if __name__ == '__main__':

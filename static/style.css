@@ -2,8 +2,9 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #f5f5f5;
+    background-color: #f5f9f5;
     color: #333;
+    min-width: 1024px;
 }
 
 .navbar {
@@ -15,7 +16,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 12px 25px;
-    background: white;
+    background: #2e7d32;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     z-index: 1000;
     border-radius: 50px;
@@ -37,7 +38,7 @@ body {
     transform: translateX(-50%);
     font-size: 24px;
     font-weight: bold;
-    color: #4a6fa5;
+    color: white;
 }
 
 .home-btn {
@@ -47,16 +48,16 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #f0f0f0;
+    background: #1b5e20;
     margin-right: 10px;
     transition: all 0.3s ease;
-    color: #4a6fa5;
+    color: white;
     text-decoration: none;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .home-btn:hover {
-    background: #e0e0e0;
+    background: #2e7d32;
     transform: scale(1.1);
 }
 
@@ -68,7 +69,7 @@ body {
 .menu-btn {
     height: 50px;
     padding: 0 20px;
-    background: #79CE93;
+    background: #4caf50;
     color: white;
     border: none;
     border-radius: 25px;
@@ -79,13 +80,13 @@ body {
 }
 
 .menu-btn:hover {
-    background: #68b67d;
+    background: #388e3c;
     transform: translateY(-2px);
 }
 
 .search-bar {
     padding: 10px 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #a5d6a7;
     border-radius: 25px;
     width: 200px;
     transition: all 0.3s;
@@ -93,14 +94,14 @@ body {
 
 .search-bar:focus {
     outline: none;
-    border-color: #4a6fa5;
+    border-color: #81c784;
     width: 250px;
 }
 
 .avatar-btn {
     width: 50px;
     height: 50px;
-    background-color: #3498db;
+    background-color: #388e3c;
     background-size: cover;
     background-position: center;
     border-radius: 50%;
@@ -124,7 +125,7 @@ body {
     align-items: center;
     gap: 8px;
     padding: 12px 20px;
-    background: #2ecc71;
+    background: #4caf50;
     color: white;
     border: none;
     border-radius: 30px;
@@ -135,7 +136,7 @@ body {
 }
 
 .auth-btn:hover {
-    background: #27ae60;
+    background: #388e3c;
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
@@ -170,12 +171,12 @@ body {
 }
 
 .section.active {
-    background: #e3f2fd;
-    border-left: 3px solid #4a6fa5;
+    background: #e8f5e9;
+    border-left: 3px solid #2e7d32;
 }
 
 .section h3 {
-    color: #4a6fa5;
+    color: #2e7d32;
     margin-bottom: 5px;
 }
 
@@ -218,7 +219,7 @@ body {
 
 .add-card-form h3 {
     margin-top: 0;
-    color: #4a6fa5;
+    color: #2e7d32;
 }
 
 .form-group {
@@ -234,7 +235,7 @@ body {
 }
 
 .add-btn {
-    background: #79CE93;
+    background: #4caf50;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -245,7 +246,7 @@ body {
 }
 
 .add-btn:hover {
-    background: #68b67d;
+    background: #388e3c;
 }
 
 .cards-container {
@@ -266,13 +267,13 @@ body {
 
 .card-text {
     font-weight: bold;
-    color: #4a6fa5;
+    color: #2e7d32;
     margin-bottom: 5px
 }
 
 .card-front {
     font-weight: bold;
-    color: #4a6fa5;
+    color: #2e7d32;
     margin-bottom: 5px;
 }
 
@@ -322,7 +323,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background: #f8f9fa;
+    background: #e8f5e9;
     border-bottom: 1px solid #e9ecef;
 }
 
@@ -391,7 +392,7 @@ body {
     display: inline-flex;
     align-items: center;
     padding: 10px 15px;
-    background: #24a9b7;
+    background: #4caf50;
     color: white;
     border-radius: 6px;
     cursor: pointer;
@@ -400,7 +401,7 @@ body {
 }
 
 .file-upload-label:hover {
-    background: #339af0;
+    background: #388e3c;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -422,7 +423,7 @@ body {
 .avatar-submit-btn {
     width: 100%;
     padding: 12px;
-    background: #24b77c;
+    background: #4caf50;
     color: white;
     border: none;
     border-radius: 6px;
@@ -437,7 +438,7 @@ body {
 }
 
 .avatar-submit-btn:hover {
-    background: #4fd24b;
+    background: #388e3c;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -527,7 +528,7 @@ body {
 }
 
 .auth-tab-btn.active {
-    color: #2ecc71;
+    color: #2e7d32;
     font-weight: bold;
 }
 
@@ -538,7 +539,7 @@ body {
     left: 0;
     width: 100%;
     height: 3px;
-    background: #2ecc71;
+    background: #2e7d32;
 }
 
 .auth-tab-content {
@@ -563,14 +564,14 @@ body {
 }
 
 .auth-form-group input:focus {
-    border-color: #2ecc71;
+    border-color: #2e7d32;
     outline: none;
 }
 
 .auth-submit-btn {
     width: 100%;
     padding: 14px;
-    background: #2ecc71;
+    background: #4caf50;
     color: white;
     border: none;
     border-radius: 6px;
@@ -580,7 +581,7 @@ body {
 }
 
 .auth-submit-btn:hover {
-    background: #27ae60;
+    background: #388e3c;
 }
 
 .hidden {
@@ -610,7 +611,7 @@ body {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: #79CE93;
+    background: #4caf50;
     color: white;
     font-size: 30px;
     border: none;
@@ -623,7 +624,7 @@ body {
 }
 
 .add-test-btn:hover {
-    background: #68b67d;
+    background: #388e3c;
     transform: scale(1.1);
 }
 
@@ -671,7 +672,7 @@ body {
 }
 
 .add-card-btn {
-    background: #4a6fa5;
+    background: #4caf50;
     color: white;
     border: none;
     padding: 10px;
@@ -681,7 +682,7 @@ body {
 }
 
 .add-card-btn:hover {
-    background: #3a5a80;
+    background: #388e3c;
 }
 
 .cards-preview {
@@ -706,12 +707,12 @@ body {
 
 .card-preview-front {
     font-weight: bold;
-    color: #4a6fa5;
+    color: #2e7d32;
 }
 
 .card-preview-back {
     font-weight: bold;
-    color: #4a6fa5;
+    color: #2e7d32;
 }
 
 .delete-preview-card {
@@ -748,13 +749,13 @@ body {
 }
 
 .create-test-btn {
-    background: #79CE93;
+    background: #4caf50;
     color: white;
     border: none;
 }
 
 .create-test-btn:hover {
-    background: #68b67d;
+    background: #388e3c;
 }
 
 .tests-list {
@@ -787,6 +788,7 @@ body {
     align-items: center;
     gap: 15px;
     transition: transform 0.3s ease;
+    border-left: 4px solid #4caf50;
 }
 
 .test-item:hover {
@@ -815,7 +817,7 @@ body {
 .test-name {
     font-weight: bold;
     font-size: 18px;
-    color: #4a6fa5;
+    color: #2e7d32;
     margin-bottom: 5px;
 }
 
@@ -834,4 +836,54 @@ body {
 .test-cards-count::before {
     content: "Фраз: ";
     color: #999;
+}
+
+.test-action-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.test-action-btn.save {
+    color: #2e7d32;
+}
+
+.test-action-btn.save::before {
+    content: "♡";
+}
+
+.test-action-btn.delete {
+    color: #e74c3c;
+}
+
+.test-action-btn.delete::before {
+    content: "♥";
+}
+
+.test-action-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.test-action-btn.save:hover {
+    background: #e3f0ff;
+}
+
+.test-action-btn.delete:hover {
+    background: #ffebee;
+}
+
+.test-item {
+    padding: 15px 20px;
 }
