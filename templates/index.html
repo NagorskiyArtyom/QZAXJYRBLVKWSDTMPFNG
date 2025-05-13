@@ -6,175 +6,193 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-left">
-            <a href="/" class="home-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
-            </a>
-            <button class="menu-btn" id="menuBtn">☰ Меню</button>
-        </div>
-        <div class="navbar-center">Match</div>
-        <div class="navbar-right">
-            <input type="text" class="search-bar" placeholder="Поиск...">
-            {% if user %}
-                <button class="avatar-btn" id="avatarBtn" style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
-                    {% if not user.avatar %}👤{% endif %}
-                </button>
-            {% else %}
-                <button class="auth-btn" id="authBtn">
-                    <span class="auth-text">Войти</span>
-                </button>
-            {% endif %}
-        </div>
-    </nav>
+<nav class="navbar">
+    <div class="navbar-left">
+        <a href="/" class="home-btn">
+            <!-- значок "домой" -->
+            <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+        </a>
+        <button class="menu-btn" id="menuBtn">☰ Меню</button>
+    </div>
+    <div class="navbar-center">Match</div>
+    <div class="navbar-right">
+        <input type="text" class="search-bar" placeholder="Поиск...">
+        {% if user %}
+        <button class="avatar-btn" id="avatarBtn"
+                style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
+            {% if not user.avatar %}👤{% endif %}
+        </button>
+        {% else %}
+        <button class="auth-btn" id="authBtn">
+            <span class="auth-text">Войти</span>
+        </button>
+        {% endif %}
+    </div>
+</nav>
 
-    {% if user %}
-        <div class="sections-container hidden" id="sectionsContainer">
-            <div class="section" data-section="tests">
-                <h3>Мои тесты</h3>
-                <p>Список ваших тестов</p>
+{% if user %}
+<!-- Пункты Меню -->
+<div class="sections-container hidden" id="sectionsContainer">
+    <div class="section" data-section="tests">
+        <h3>Мои тесты</h3>
+        <p>Список ваших тестов</p>
+    </div>
+    <div class="section-divider"></div>
+    <div class="section" data-section="favorites">
+        <h3>Избранное</h3>
+        <p>Сохраненные тесты</p>
+    </div>
+    <div class="section-divider"></div>
+    <div class="section" data-section="history">
+        <h3>История</h3>
+        <p>Последние просмотренные тесты</p>
+    </div>
+</div>
+
+<!-- Все тесты -->
+<div id="mainContent" class="section-content active">
+    <div class="content-box">
+        <h2>Все тесты</h2>
+        <div class="tests-container" id="userAllTestsContainer"></div>
+    </div>
+</div>
+
+<!-- Мои тесты -->
+<div id="testsContent" class="section-content">
+    <div class="content-box">
+        <h2>Мои тесты</h2>
+        <div class="tests-container" id="userTestsContainer"></div>
+        <!-- Форма, для создания теста -->
+        <div class="add-test-container hidden" id="addTestContainer">
+            <div class="test-header">
+                <input type="text" id="testName" placeholder="Название теста" class="test-name-input">
+                <div class="error-message" id="testNameError"></div>
             </div>
-            <div class="section-divider"></div>
-            <div class="section" data-section="favorites">
-                <h3>Избранное</h3>
-                <p>Сохраненные тесты</p>
+            <div class="cards-form-container">
+                <div class="card-form">
+                    <input type="text" class="card-front-input" placeholder="Первая часть фразы">
+                    <input type="text" class="card-back-input" placeholder="Вторая часть фразы">
+                    <button class="add-card-btn">Добавить фразу</button>
+                </div>
+                <div class="cards-preview" id="cardsPreview"></div>
             </div>
-            <div class="section-divider"></div>
-            <div class="section" data-section="history">
-                <h3>История</h3>
-                <p>Ваши действия</p>
+            <div class="test-actions">
+                <button class="cancel-test-btn">Отмена</button>
+                <button class="create-test-btn">Создать тест</button>
             </div>
         </div>
+        <button class="add-test-btn" id="addTestBtn">+</button>
+    </div>
+</div>
 
-        <div id="mainContent" class="section-content active">
-            <div class="content-box">
-                <h2>Все тесты</h2>
-                <div class="tests-container" id="userAllTestsContainer"></div>
-            </div>
+<!-- Избранное -->
+<div id="favoritesContent" class="section-content">
+    <div class="content-box">
+        <h2>Избранное</h2>
+        <div class="tests-container" id="userFavoritesContainer">
+            <p style="text-align: center; color: #666;">Пока нет избранных тестов</p>
         </div>
+    </div>
+</div>
 
-        <div id="testsContent" class="section-content">
-            <div class="content-box">
-                <h2>Мои тесты</h2>
-                <div class="tests-container" id="userTestsContainer"></div>
-                <div class="add-test-container hidden" id="addTestContainer">
-                    <div class="test-header">
-                        <input type="text" id="testName" placeholder="Название теста" class="test-name-input">
-                        <div class="error-message" id="testNameError"></div>
-                    </div>
-                    <div class="cards-form-container">
-                        <div class="card-form">
-                            <input type="text" class="card-front-input" placeholder="Первая часть фразы">
-                            <input type="text" class="card-back-input" placeholder="Вторая часть фразы">
-                            <button class="add-card-btn">Добавить фразу</button>
-                        </div>
-                        <div class="cards-preview" id="cardsPreview"></div>
-                    </div>
-                    <div class="test-actions">
-                        <button class="cancel-test-btn">Отмена</button>
-                        <button class="create-test-btn">Создать тест</button>
+<!-- История -->
+<div id="historyContent" class="section-content">
+    <div class="content-box">
+        <h2>История действий</h2>
+        <div class="tests-container" id="userHistoryContainer">
+            <p style="text-align: center; color: #666;">История пуста</p>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно аватара -->
+<div class="modal hidden" id="avatarModal">
+    <div class="avatar-modal">
+        <div class="avatar-modal-header">
+            <h3>Профиль</h3>
+            <button class="avatar-modal-close" id="closeAvatarBtn">&times;</button>
+        </div>
+        <div class="avatar-modal-body">
+            <div class="avatar-preview-container">
+                <div class="avatar-preview" id="avatarPreview"
+                     style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
+                    {% if not user.avatar %}<span class="default-avatar-icon">👤</span>{% endif %}
+                </div>
+            </div>
+            <form method="POST" action="{{ url_for('upload_avatar') }}"
+                  enctype="multipart/form-data" class="avatar-upload-form">
+                <div class="file-input-wrapper">
+                    <label for="avatarInput" class="file-upload-label">
+                        <span class="file-upload-text">Выбрать файл</span>
+                        <input type="file" name="avatar" id="avatarInput" accept="image/*" required>
+                    </label>
+                    <div class="file-requirements">
+                        JPG, PNG (макс. 2MB)
                     </div>
                 </div>
-                <button class="add-test-btn" id="addTestBtn">+</button>
-            </div>
+                <button type="submit" class="avatar-submit-btn">Сохранить изменения</button>
+            </form>
         </div>
-
-        <div id="favoritesContent" class="section-content">
-            <div class="content-box">
-                <h2>Избранное</h2>
-                <div class="tests-container" id="userFavoritesContainer">
-                    <p style="text-align: center; color: #666;">Пока нет избранных тестов</p>
-                </div>
-            </div>
+        <div class="avatar-modal-footer">
+            <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
         </div>
+    </div>
+</div>
+{% else %}
+<!-- Для неавторизованных пользователей (режим гостя) -->
+<div class="content-box" style="margin-top: 120px; max-width: 800px; margin-left: auto; margin-right: auto;">
+    <h2>Добро пожаловать в Match!</h2>
+    <p style="text-align: center;">Платформа для изучения языков с помощью карточек</p>
+    <div class="tests-container" id="guestTestsContainer"></div>
+</div>
 
-        <div id="historyContent" class="section-content">
-            <div class="content-box">
-                <h2>История действий</h2>
-                <p style="text-align: center; color: #666;">История действий пока пуста</p>
-            </div>
+<!-- Окно для авторизации -->
+<div class="auth-modal hidden" id="authModal">
+    <div class="auth-modal-content">
+        <span class="auth-close-btn" id="closeAuthBtn">&times;</span>
+        <div class="auth-tabs">
+            <button class="auth-tab-btn active" data-tab="login">Вход</button>
+            <button class="auth-tab-btn" data-tab="register">Регистрация</button>
         </div>
-
-        <div class="modal hidden" id="avatarModal">
-            <div class="avatar-modal">
-                <div class="avatar-modal-header">
-                    <h3>Профиль</h3>
-                    <button class="avatar-modal-close" id="closeAvatarBtn">&times;</button>
-                </div>
-                <div class="avatar-modal-body">
-                    <div class="avatar-preview-container">
-                        <div class="avatar-preview" id="avatarPreview" style="{% if user.avatar %}background-image: url('{{ url_for('uploaded_file', filename=user.avatar) }}');{% endif %}">
-                            {% if not user.avatar %}<span class="default-avatar-icon">👤</span>{% endif %}
+        <div class="auth-tab-content">
+            <div id="loginForm" class="auth-tab-pane active">
+                <div class="auth-form-container">
+                    <form method="POST" action="{{ url_for('index') }}">
+                        <div class="auth-form-group compact">
+                            <input type="text" name="username" placeholder="Email" required>
                         </div>
-                    </div>
-                    <form method="POST" action="{{ url_for('upload_avatar') }}" enctype="multipart/form-data" class="avatar-upload-form">
-                        <div class="file-input-wrapper">
-                            <label for="avatarInput" class="file-upload-label">
-                                <span class="file-upload-text">Выбрать файл</span>
-                                <input type="file" name="avatar" id="avatarInput" accept="image/*" required>
-                            </label>
-                            <div class="file-requirements">
-                                JPG, PNG (макс. 2MB)
-                            </div>
+                        <div class="auth-form-group compact">
+                            <input type="password" name="password" placeholder="Пароль" required>
                         </div>
-                        <button type="submit" class="avatar-submit-btn">Сохранить изменения</button>
+                        <button type="submit" name="login" class="auth-submit-btn">Войти</button>
                     </form>
                 </div>
-                <div class="avatar-modal-footer">
-                    <a href="{{ url_for('logout') }}" class="logout-btn">Выйти</a>
+            </div>
+            <div id="registerForm" class="auth-tab-pane">
+                <div class="auth-form-container">
+                    <form method="POST" action="{{ url_for('index') }}" id="registerFormElement">
+                        <div class="auth-form-group compact">
+                            <input type="text" name="username" id="registerEmail" placeholder="Email" required>
+                            <div class="error-message" id="registerEmailError"></div>
+                        </div>
+                        <div class="auth-form-group compact">
+                            <input type="password" name="password" id="registerPassword" placeholder="Пароль" required>
+                            <div class="error-message" id="registerPasswordError"></div>
+                        </div>
+                        <div class="auth-form-group compact">
+                            <input type="text" name="name" placeholder="Ваше имя" required>
+                        </div>
+                        <button type="submit" name="register" class="auth-submit-btn">Зарегистрироваться</button>
+                    </form>
                 </div>
             </div>
         </div>
-    {% else %}
-        <div class="content-box" style="margin-top: 120px; max-width: 800px; margin-left: auto; margin-right: auto;">
-            <h2>Добро пожаловать в Match!</h2>
-            <p style="text-align: center;">Платформа для изучения языков с помощью карточек</p>
-            <div class="tests-container" id="guestTestsContainer"></div>
-        </div>
+    </div>
+</div>
+{% endif %}
 
-        <div class="auth-modal hidden" id="authModal">
-            <div class="auth-modal-content">
-                <span class="auth-close-btn" id="closeAuthBtn">&times;</span>
-                <div class="auth-tabs">
-                    <button class="auth-tab-btn active" data-tab="login">Вход</button>
-                    <button class="auth-tab-btn" data-tab="register">Регистрация</button>
-                </div>
-                <div class="auth-tab-content">
-                    <div id="loginForm" class="auth-tab-pane active">
-                        <div class="auth-form-container">
-                            <form method="POST" action="{{ url_for('index') }}">
-                                <div class="auth-form-group compact">
-                                    <input type="text" name="username" placeholder="Email" required>
-                                </div>
-                                <div class="auth-form-group compact">
-                                    <input type="password" name="password" placeholder="Пароль" required>
-                                </div>
-                                <button type="submit" name="login" class="auth-submit-btn">Войти</button>
-                            </form>
-                        </div>
-                    </div>
-                    <div id="registerForm" class="auth-tab-pane">
-                        <div class="auth-form-container">
-                            <form method="POST" action="{{ url_for('index') }}">
-                                <div class="auth-form-group compact">
-                                    <input type="text" name="username" placeholder="Email" required>
-                                </div>
-                                <div class="auth-form-group compact">
-                                    <input type="password" name="password" placeholder="Пароль" required>
-                                </div>
-                                <div class="auth-form-group compact">
-                                    <input type="text" name="name" placeholder="Ваше имя" required>
-                                </div>
-                                <button type="submit" name="register" class="auth-submit-btn">Зарегистрироваться</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

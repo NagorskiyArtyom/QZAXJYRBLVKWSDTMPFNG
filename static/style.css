@@ -887,3 +887,48 @@ body {
 .test-item {
     padding: 15px 20px;
 }
+
+/* ... Артем, остальные твои стили не трогала */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0; padding: 20px;
+  background: #f5f9f5;
+  color: #333;
+  min-width: 1024px;
+}
+
+/* Навигация */
+.navbar {
+  position: fixed; top: 15px; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 25px; background: #2e7d32; border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: calc(100% - 30px); max-width: 1400px; margin: 0 auto;
+}
+
+/* Зелёная подсветка формы создания */
+.add-test-container {
+  background: #e8f5e9;
+  border: 2px solid #2e7d32;
+}
+
+/* Форма ввода карточек */
+.add-test-container .card-form {
+  background: #c8e6c9;
+}
+
+/* Кнопки в форме */
+.add-test-container .add-card-btn,
+.add-test-container .create-test-btn {
+  background: #2e7d32; color: #fff;
+}
+.add-test-container .add-card-btn:hover,
+.add-test-container .create-test-btn:hover {
+  background: #388e3c;
+}
+
+/* Поле «Название теста» чуть уже */
+.test-name-input {
+  width: 80%; max-width: 300px;
+}
