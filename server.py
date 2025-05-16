@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from datetime import datetime
 
+# Инициализация приложения
 app = Flask(__name__)
 app.secret_key = 'super_secret_key_12345'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
@@ -14,6 +15,7 @@ db = SQLAlchemy(app)
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 
+# Таблицы для базы данных
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -61,6 +63,7 @@ with app.app_context():
     db.create_all()
 
 
+# Маршрут для окна авторизации и профиля
 @app.route('/', methods=['GET', 'POST'])
 def index():
     user = None
@@ -68,6 +71,7 @@ def index():
         user = User.query.get(session['user_id'])
 
     if request.method == 'POST':
+        # Вход
         if 'login' in request.form:
             username = request.form['username']
             password = request.form['password']
@@ -77,11 +81,13 @@ def index():
                 session['user_id'] = user.id
                 return redirect(url_for('index'))
 
+        # Регистрация
         elif 'register' in request.form:
             username = request.form['username']
             password = request.form['password']
             name = request.form['name']
 
+            # Проверяю уникальность email и имени
             if User.query.filter_by(username=username).first():
                 return redirect(url_for('index'))
             elif User.query.filter_by(name=name).first():
@@ -139,6 +145,7 @@ def logout():
     return redirect(url_for('index'))
 
 
+# Работаем с карточками и тестами
 @app.route('/add_card', methods=['POST'])
 def add_card():
     if 'user_id' not in session:
@@ -147,14 +154,6 @@ def add_card():
     data = request.get_json()
     if not data or 'front_text' not in data or 'back_text' not in data or 'test_name' not in data:
         return jsonify({'error': 'Invalid data'}), 400
-
-    existing_test = Card.query.filter_by(
-        user_id=session['user_id'],
-        test_name=data['test_name']
-    ).first()
-
-    if existing_test:
-        return jsonify({'error': 'У вас уже есть тест с таким названием'}), 400
 
     new_card = Card(
         front_text=data['front_text'],
