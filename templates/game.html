@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Игра: {{ test_name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='game.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>{{ test_name }}</h1>
+        <button class="exit-btn" onclick="window.close()">Выйти</button>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat">Всего: <span id="total-phrases">{{ cards|length }}</span></div>
+        <div class="stat correct">Верно: <span id="correct-count">0</span></div>
+        <div class="stat">Осталось: <span id="remaining-phrases">{{ cards|length }}</span></div>
+    </div>
+
+    <div class="container" id="areas-container">
+        <div class="scroll-area" id="first-area">
+            <h3>Первые части</h3>
+            <div id="first-parts">
+                {% for key in keys %}
+                    <div class="phrase-part" draggable="true" data-type="first" data-original="{{ key }}" data-value="{{ key }}">{{ key }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="scroll-area" id="second-area">
+            <h3>Вторые части</h3>
+            <div id="second-parts">
+                {% for value in values %}
+                    <div class="phrase-part" draggable="true" data-type="second" data-original="{{ value }}" data-value="{{ value }}">{{ value }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="completion-message" class="completion-message">
+        Результат: <span id="result-text"></span>
+    </div>
+
+    <div class="result-section" id="result-section">
+        <h3 style="margin: 0 0 15px 0; color: var(--primary-dark);">Сопоставленные фразы:</h3>
+        <div class="result-area" id="results"></div>
+    </div>
+
+    <button class="reset-btn" onclick="location.reload()">Начать заново</button>
+
+    <script src="{{ url_for('static', filename='game.js') }}"></script>
+    <script>
+        const originalPairs = {{ game_data|tojson }};
+        const keys = {{ keys|tojson }};
+        const values = {{ values|tojson }};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initGame(originalPairs, keys, values);
+        });
+    </script>
+</body>
+</html>
