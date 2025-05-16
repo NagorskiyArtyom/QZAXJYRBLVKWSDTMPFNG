@@ -13,6 +13,7 @@
                     <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
                 </svg>
             </a>
+            <button class="chats-btn" id="chatsBtn">💬 Чаты</button>
             <button class="menu-btn" id="menuBtn">☰ Меню</button>
         </div>
         <div class="navbar-center">Match</div>
@@ -97,6 +98,37 @@
             </div>
         </div>
 
+        <div id="chatsContent" class="section-content">
+            <div class="content-box">
+                <button class="friend-requests-btn" id="friendRequestsBtn">Заявки</button>
+                <div class="chats-container" id="chatsContainer"></div>
+                <button class="add-friend-btn" id="addFriendBtn">+ Добавить друга</button>
+            </div>
+        </div>
+
+        <div class="modal hidden" id="friendRequestsModal">
+            <div class="friend-requests-modal">
+                <div class="modal-header">
+                    <h3>Заявки в друзья</h3>
+                    <button class="modal-close-btn" id="closeFriendRequestsBtn">&times;</button>
+                </div>
+                <div class="modal-body" id="friendRequestsList"></div>
+            </div>
+        </div>
+
+        <div class="modal hidden" id="addFriendModal">
+            <div class="add-friend-modal">
+                <div class="modal-header">
+                    <h3>Добавить друга</h3>
+                    <button class="modal-close-btn" id="closeAddFriendBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="search-friend-input" id="searchFriendInput" placeholder="Поиск по имени">
+                    <div id="searchFriendResults"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal hidden" id="avatarModal">
             <div class="avatar-modal">
                 <div class="avatar-modal-header">
@@ -176,5 +208,14 @@
         </div>
     {% endif %}
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <div class="modal hidden" id="sendTestModal">
+        <div class="send-test-modal">
+            <div class="modal-header">
+                <h3>Отправить тест другу</h3>
+                <button class="modal-close-btn" id="closeSendTestBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="friendsList"></div>
+        </div>
+    </div>
 </body>
 </html>
